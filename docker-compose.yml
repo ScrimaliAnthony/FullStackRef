@@ -13,5 +13,22 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  flyway:
+    build:
+      context: ./sql
+      dockerfile: Dockerfile.flyway
+    depends_on:
+      - db
+    entrypoint: ["flyway", "migrate"]
+    command:
+      - -url=jdbc:postgresql://db:5432/${POSTGRES_DB}
+      - -user=${POSTGRES_USER}
+      - -password=${POSTGRES_PASSWORD}
+      - -locations=filesystem:/flyway/sql
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
 volumes:
   pgdata: {}
