@@ -25,3 +25,4 @@ Lancez la commande `docker-compose up` pour créer et lancer la base de données
 ## Avancement du Projet
 
 Création du conteneur PostgreSQL.
+Ajout du service de gestion de migration de base de données Flyway
