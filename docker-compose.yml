@@ -1,8 +1,7 @@
-version: "3.9"
-
 services:
-  db:
-    image: postgres:12
+# BASE DE DONNEES
+  DataBase:
+    image: postgres@sha256:46aa2ee5d664b275f05d1a963b30fff60fb422b4b594d509765c42db46d48881 # Version 16.3 de PostgreSQL
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -10,25 +9,45 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
+    networks:
+      - fullstackref-networks
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
 
-  flyway:
-    build:
-      context: ./sql
-      dockerfile: Dockerfile.flyway
+  FlyWay:
+    image: flyway/flyway@sha256:b984137595b6603a97d36ff10b7c185d74b155de340e606cddb21fd1500846fe # Version 10.15 de Flyway
+    command: >
+      -url=jdbc:postgresql://DataBase:5432/${POSTGRES_DB}
+      -user=${POSTGRES_USER}
+      -password=${POSTGRES_PASSWORD}
+      -locations=filesystem:/flyway/sql
+      migrate
+    volumes:
+      - ./flyway:/flyway/sql
     depends_on:
-      - db
-    entrypoint: ["flyway", "migrate"]
-    command:
-      - -url=jdbc:postgresql://db:5432/${POSTGRES_DB}
-      - -user=${POSTGRES_USER}
-      - -password=${POSTGRES_PASSWORD}
-      - -locations=filesystem:/flyway/sql
+      - DataBase
+    networks:
+      - fullstackref-networks
+
+  PGAdmin:
+    image: dpage/pgadmin4@sha256:61fd25f428c155027fb2aa74b913d317af11a14f55e6135484b5e86a8840520b # Version 8.8 de PGAdmin
+    restart: always
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "5050:80"
+    networks:
+      - fullstackref-networks
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - DataBase
+
+networks:
+  fullstackref-networks:
+    driver: bridge
 
 volumes:
-  pgdata: {}
+  postgres-data:
+  pgadmin-data:

@@ -5,6 +5,7 @@ Ce projet a pour but de me servir de référence pour les futurs projets FullSta
 - PostgreSQL
     - Flyway
 - Nest.js (TypeScript)
+    - Ejs (Rendu coté serveur)
 - Next.js (TypeScript)
 - Docker
 - Jest
