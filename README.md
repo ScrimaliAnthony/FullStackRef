@@ -1,4 +1,4 @@
-<h1 align="center">FrenchGuessr</h1>
+<h1 align="center">FullStackRef</h1>
 
 ## Table des Matières
 
