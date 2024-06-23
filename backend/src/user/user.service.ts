@@ -11,7 +11,14 @@ export class UserService {
     return this.db.any('SELECT * FROM users');
   }
 
+  async getUserById(id: number): Promise<any> {
+    return this.db.oneOrNone('SELECT * FROM users WHERE id = $1', [id]);
+  }
+
   async addUser(nom: string, prenom: string, email: string): Promise<any> {
-    return this.db.one('INSERT INTO users(nom, prenom, email) VALUES($1, $2, $3) RETURNING *', [nom, prenom, email]);
+    return this.db.one(
+      'INSERT INTO users(nom, prenom, email) VALUES($1, $2, $3) RETURNING *',
+      [nom, prenom, email],
+    );
   }
 }
