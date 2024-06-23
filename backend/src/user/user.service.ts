@@ -28,4 +28,11 @@ export class UserService {
       [nom, prenom, email, id],
     );
   }
+
+  async deleteUser(id: number): Promise<{ id: number, nom: string, prenom: string, email: string }> {
+    return this.db.oneOrNone(
+      'DELETE FROM users WHERE id = $1 RETURNING *',
+      [id]
+    )
+  }
 }
