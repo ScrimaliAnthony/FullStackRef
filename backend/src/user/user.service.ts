@@ -21,4 +21,11 @@ export class UserService {
       [nom, prenom, email],
     );
   }
+
+  async updateUser(id: number, nom: string, prenom: string, email: string): Promise<any> {
+    return this.db.oneOrNone(
+      'UPDATE users SET nom = $1, prenom = $2, email = $3 WHERE id = $4 RETURNING *',
+      [nom, prenom, email, id],
+    );
+  }
 }
