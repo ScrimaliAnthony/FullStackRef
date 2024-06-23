@@ -10,4 +10,8 @@ export class UserService {
   async getUsers(): Promise<any[]> {
     return this.db.any('SELECT * FROM users');
   }
+
+  async addUser(nom: string, prenom: string, email: string): Promise<any> {
+    return this.db.one('INSERT INTO users(nom, prenom, email) VALUES($1, $2, $3) RETURNING *', [nom, prenom, email]);
+  }
 }
