@@ -44,6 +44,30 @@ services:
     depends_on:
       - DataBase
 
+# BACKEND
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.backend
+    restart: always
+    working_dir: /app/backend
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=DataBase
+      - DB_PORT=5432
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_NAME=${POSTGRES_DB}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - DataBase
+    volumes:
+      - ./backend:/app/backend
+      - /app/backend/node_modules
+    networks:
+      - fullstackref-networks
+
 networks:
   fullstackref-networks:
     driver: bridge
