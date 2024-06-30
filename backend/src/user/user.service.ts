@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { IDatabase } from 'pg-promise';
 
 @Injectable()
@@ -12,7 +12,11 @@ export class UserService {
   }
 
   async getUserById(id: number): Promise<any> {
-    return this.db.oneOrNone('SELECT * FROM users WHERE id = $1', [id]);
+    const user = await this.db.oneOrNone('SELECT * FROM users WHERE id = $1', [id]);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return user;
   }
 
   async addUser(nom: string, prenom: string, email: string): Promise<any> {
@@ -23,16 +27,24 @@ export class UserService {
   }
 
   async updateUser(id: number, nom: string, prenom: string, email: string): Promise<any> {
-    return this.db.oneOrNone(
+    const user = await this.db.oneOrNone(
       'UPDATE users SET nom = $1, prenom = $2, email = $3 WHERE id = $4 RETURNING *',
       [nom, prenom, email, id],
     );
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return user;
   }
 
-  async deleteUser(id: number): Promise<{ id: number, nom: string, prenom: string, email: string }> {
-    return this.db.oneOrNone(
+  async deleteUser(id: number): Promise<any> {
+    const user = await this.db.oneOrNone(
       'DELETE FROM users WHERE id = $1 RETURNING *',
       [id]
-    )
+    );
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    return user;
   }
 }
